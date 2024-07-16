@@ -505,3 +505,153 @@ fvtool(tf1)
 tf2=zp2tf(bz',az',k)
 fvtool(tf2)
 title(fvtool(tf2),'102115190 Actual Butterworth Filter')
+
+
+
+clc
+clear all
+close all
+x=[1 2 3 4 5]
+h=[1 2 3 4]
+y=conv(x,h)
+Without Built in function
+clc
+clear all
+close all
+x=[1 2 3 4]
+h=[1 2 3]
+n=length(x)
+m=length(h)
+k=n+m-1
+xn=[x,zeros(1,m-1)]
+hn=[h,zeros(1,n-1)]
+y=zeros(1,k)
+for i=1:k
+for j=1:i
+y(i)=y(i)+ xn(j)*hn(i-j+1)
+end
+end
+subplot(2,1,1)
+stem(y)
+xlabel("k---->")
+ylabel("x[n]*y[n]---->")
+title("convolution without in-built function")
+legend("5194")
+Y=conv(x,h)
+subplot(2,1,2)
+stem(Y)
+xlabel("k---->")
+ylabel("x[n]*y[n]---->")
+title("convolution with in-built function")
+legend("5194")
+
+
+%% 4.d compute circular convolution for 2 user input seq
+% using DFT and IDFT
+x=input("enter seq1 :") %[1 2 3 4]
+h=input("enter seq2 :") %[1 2 3]
+l1=length(x);
+l2=length(h);
+N=max(l1,l2);
+if(l1>l2)
+xn=x;
+hn=[h,zeros(1,l1-l2)];
+elseif(l1<l2)
+xn=[x,zeros(1,l2-l1)];
+hn=h;
+else
+xn=x;
+hn=h;
+end
+Y=zeros(N)
+X=fft(xn)
+H=fft(hn);
+Y=X.*H;
+y=ifft(Y)
+stem(y)
+xlabel("n--->");
+ylabel("x[n]*y[n]---->");
+title("4(d) calculate Circ. Convolution using DFT-IDFT","AP102115194")
+%% 4.a calculate circular convolution of 2 user input
+% sequences without direct command
+clc;
+close all;
+clear all;
+x=input('Enter the first sequence :');
+h=input('Enter the second sequence: ');
+N1=length(x);
+N2=length(h);
+N=max(N1,N2);
+y=zeros(1,N);
+if(N2>N1)
+xn=[x,zeros(1,N-N1)];
+hn=h;
+elseif(N2==N1)
+xn=x;
+hn=h;
+else
+xn=x;
+hn=[h,zeros(1,N-N2)];
+end
+for k=0:N-1
+y(k+1)=0;
+for n=0:N-1
+j=mod(k-n,N);
+y(k+1)=y(k+1)+xn(n+1).*hn(j+1);
+end
+end
+stem(y);
+title('Circular Convolution without in-built command',"AP102115194");
+xlabel('n---->');
+ylabel('cconv(x,h)---->');
+%% 4.b compute linear convolution using circular convolution
+% sequences without direct command
+clc;
+close all;
+clear all;
+x=input('Enter the first sequence :');
+h=input('Enter the second sequence: ');
+N1=length(x);
+N2=length(h);
+N=N1+N2-1;
+y=zeros(1,N);
+xn=[x,zeros(1,N2-1)];
+hn=[h,zeros(1,N1-1)];
+for k=0:N-1
+y(k+1)=0;
+for n=0:N-1
+j=mod(k-n,N);
+y(k+1)=y(k+1)+xn(n+1).*hn(j+1);
+end
+end
+stem(y);
+title('linear convolution using circular convolution',"AP102115194");
+xlabel('n---->');
+ylabel('cconv(x,h)---->');
+%% 4.c circular convolution using linear convolution
+clc;
+clear all;
+close all;
+% Input sequences
+x = input('Enter seq1: ');
+h = input('Enter seq2: ');
+% Lengths of the input sequences
+l1 = length(x);
+l2 = length(h);
+N1 = l1 + l2 - 1;
+N2 = max(l1, l2);
+y = conv(x, h);
+disp('Linear convolution result:');
+disp(y);
+y2 = zeros(1, N2);
+for i = 1:N1
+if i <= N2
+y2(i) = y(i);
+else
+y2(i - N2) = y2(i - N2) + y(i);
+end
+end
+stem(y2);
+title('Circular Convolution using Linear Convolution',"AP102115194");
+xlabel('n---->');
+ylabel('x[n]*h[n]---->');
