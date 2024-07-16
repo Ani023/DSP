@@ -1,0 +1,507 @@
+% Experiment 10(a)
+clear all;
+clc;
+
+N = 51; % Length of sequence
+n = 0 : (N - 1);
+x1 = sin(2 * pi * 0.15 * n);
+x2 = sin(2 * pi * 0.1 * n) + sin(2 * pi * 0.3 * n);
+
+M = 4;
+y1 = downsample(x1, M);
+L1 = length(y1);
+y2 = downsample(x2, M);
+L2 = length(y2);
+
+subplot(2, 2, 1);
+stem(n, x1(1 : N));
+xlabel('n');
+ylabel('x1[n]');
+title('Original signal x1[n] 102165013');
+
+subplot(2, 2, 2);
+stem(n, x2(1 : N));
+xlabel('n');
+ylabel('x2[n]');
+title('Original signal x2[n] 102165013');
+
+subplot(2, 2, 3);
+stem(0 : (L1 - 1), y1(1 : L1));
+xlabel('m');
+ylabel('y1[m]');
+title('Downsampled signal y1[m] (M = 4)');
+
+subplot(2, 2, 4);
+stem(0 : (L2 - 1), y2(1 : L2));
+xlabel('m');
+ylabel('y2[m]');
+title('Downsampled signal y2[m] (M = 4)');
+
+
+% Experiment 10(b)
+clear all;
+clc;
+
+N = 21; % Taken 21 as lot of samples not distinct
+n = 0 : (N - 1);
+x1 = sin(2 * pi * 0.15 * n);
+x2 = sin(2 * pi * 0.1 * n) + sin(2 * pi * 0.3 * n);
+
+M = 5;
+y1 = upsample(x1, M);
+L1 = length(y1);
+y2 = upsample(x2, M);
+L2 = length(y2);
+
+subplot(2, 2, 1);
+stem(n, x1(1 : N));
+xlabel('n');
+ylabel('x1[n]');
+title('Original signal x1[n]');
+
+subplot(2, 2, 2);
+stem(n, x2(1 : N));
+xlabel('n');
+ylabel('x2[n]');
+title('Original signal x2[n]');
+
+subplot(2, 2, 3);
+stem(0 : (L1 - 1), y1(1 : L1));
+xlabel('m');
+ylabel('y1[m]');
+title('Upsampled signal y1[m] (M = 5)');
+
+subplot(2, 2, 4);
+stem(0 : (L2 - 1), y2(1 : L2));
+xlabel('m');
+ylabel('y2[m]');
+title('Upsampled signal y2[m] (M = 5)');
+
+
+experiment 1 
+clc
+clear all
+close all
+%% impulse function using matlab
+n=[-4:4]
+del=n==0
+stem(n,del)
+xlabel('n---->')
+ylabel('del(n)---->')
+title('unit impulse func.')
+%% unit step function using matlab
+u=-10:10
+unit =u>=0
+stem(u,unit)
+xlabel('n---->')
+ylabel('u[n]---->')
+title('unit step function')
+%% sgnum function using matlab
+x=-20:20;
+signum_x=(x>0)-(x<0)
+stem(x,signum_x)
+title('signum function')
+xlabel('n---->')
+ylabel('x[n]---->')
+%% square wave using matlab
+f = 1;
+T = 1/f;
+fs=10*f
+t = 0:1/fs:4*T;
+x1 = square(2*pi*f*t, 50);
+plot(t, x1);
+hold on
+x2 = square(2*pi*f*t, 75);
+plot(t, x2);
+xlabel('t---->');
+ylabel('x(t)---->');
+title('Square Wave');
+%% alternate way to form square wave
+n=0:10
+x1=square(n,50)
+x2=square(n,75)
+x3=square(n,25)
+stem(n,x1)
+hold on;
+stem(n,x2,'r')
+hold on;
+stem(n,x3,'g')
+%% sinusoidal wave using matlab
+f=input('freq') %10
+T=1/f
+fs=10*f
+t=-2*T:1/fs:2*T
+A=input('amplitude') %10
+p=input('Phase') %10
+y=A*sin((2*pi*f*t)+p)
+stem(t,y)
+xlabel('t---->')
+ylabel('y---->')
+title('sinusoidal wave')
+
+
+clc
+clear all
+close all
+x=[1 2 3 4]
+h=[1 2 3]
+n=length(x)
+m=length(h)
+k=n+m-1
+xn=[x,zeros(1,m-1)]
+hn=[h,zeros(1,n-1)]
+y=zeros(1,k)
+for i=1:k
+for j=1:i
+y(i)=y(i)+ xn(j)*hn(i-j+1)
+end
+end
+subplot(2,1,1)
+stem(y)
+xlabel("k---->")
+ylabel("x[n]*y[n]---->")
+title("convolution without in-built function")
+legend("5194")
+Y=conv(x,h)
+subplot(2,1,2)
+stem(Y)
+xlabel("k---->")
+ylabel("x[n]*y[n]---->")
+title("convolution with in-built function")
+legend("5194")
+
+clc
+clear all
+close all
+%% DFT
+x=[1 2 3 4 5];
+N=length(x);
+y=zeros(1,N);
+for k=0:N-1
+for n=0:N-1
+y(k+1) = y(k+1) + x(n+1)*exp(-2*pi*k*n*(1j)/N);
+end
+end
+y
+magnitude= abs(y)
+phase=angle(y)
+f=(0:N-1)*(1/N)
+subplot(3,1,1)
+stem(y)
+title("DFT of sequence without in-built function")
+xlabel("k")
+ylabel("X[k]")
+subplot(3,1,2);
+stem(f,magnitude);
+title("magnitude spectrum")
+xlabel("k")
+ylabel("|ak|")
+subplot(3,1,3)
+stem(f,phase)
+title("phase spectrum")
+xlabel("k---->")
+ylabel("angle(ak)---->")
+%% IDFT
+N=length(y);%y is DFT(x) obtained from last part.
+z=zeros(1,N);
+for n=0:N-1
+for k=0:N-1
+z(n+1) = z(n+1) + (1/N)*y(k+1)*exp(2*pi*k*n*(1i)/N);
+end
+end
+figure
+title("IDFT of result from part (a)");
+xlabel("n---->");
+
+
+
+EXPERIMENT 5
+clc
+clear all
+close all
+%% rectangular window
+m=25;
+rwin=ones(1,m);
+figure(1);
+subplot(2,1,1)
+stem(rwin);
+xlabel('n---->')
+ylabel('amplitude---->')
+title('Rectangular window')
+[h,w]=freqz(rwin);
+wn=w./(2*pi);
+hn=abs(h)./max(abs(h));
+subplot(2,1,2)
+plot(wn,20.*log10(hn))
+xlabel('Normalized frequency---->')
+ylabel('Normalized magnitude response (db)---->')
+title('frequency response of rectangular window function')
+hold on
+m=49;
+rwin=ones(1,m);
+[h,w]=freqz(rwin);
+wn=w./(2*pi);
+hn=abs(h)./max(abs(h));
+plot(wn,20.*log10(hn),'r')
+hold off
+legend('m=25','m=49');
+%% hamming window
+m=25;
+n=0:1:m-1;
+hammingw=0.54 - 0.46.*(cos((2.*pi.*n)./(m-1)));
+figure(2);
+subplot(2,1,1)
+stem(hammingw);
+xlabel('n---->')
+ylabel('amplitude---->')
+title('hamming window with m=25')
+[h,w]=freqz(hammingw);
+wn=w./(2*pi);
+hn=abs(h)./max(abs(h));
+subplot(2,1,2)
+plot(wn,20.*log10(hn),'b')
+xlabel('Normalized frequency---->')
+ylabel('normalized magnitude response (db)---->')
+title('frequency response of hamming window function')
+hold on
+clear
+m=49;
+n=0:1:m-1;
+hammingw=0.54 - 0.46.*(cos((2.*pi.*n)./(m-1)));
+[h,w]=freqz(hammingw);
+wn=w./(2*pi);
+hn=abs(h)./max(abs(h));
+plot(wn,20.*log10(hn))
+hold off
+legend('m=25','m=49');
+%% hanning window
+m=25;
+n=0:1:m-1;
+hanw=(0.5)*(1-cos((2.*pi.*n)./(m-1)));
+figure(3);
+subplot(2,1,1)
+stem(n,hanw,'r');
+xlabel('n---->')
+ylabel('amplitude---->')
+title('hanning window with m=25 ')
+[h,w]=freqz(hanw);
+wn=w./(2*pi);
+hn=abs(h)./max(abs(h));
+subplot(2,1,2)
+plot(wn,20.*log10(hn),'b')
+xlabel('Normalized frequency---->')
+ylabel('normalized magnitude response (db)---->')
+title('frequency response of hanning window function')
+hold on
+clear
+m=49;
+n=0:1:m-1;
+hanw=(0.5)*(1-cos((2.*pi.*n)./(m-1)));
+[h,w]=freqz(hanw);
+wn=w./(2*pi);
+hn=abs(h)./max(abs(h));
+plot(wn,20.*log10(hn),'r')
+hold off
+legend('m=25','m=49');
+%% blackman window
+m=25;
+n=0:1:m-1;
+blmw= 0.42-(0.5)*(cos((2.*pi.*n)./(m-1))) + (0.08)*(cos((4.*pi.*n)./(m-1)));
+figure(4);
+subplot(2,1,1)
+stem(n,blmw,'r');
+xlabel('n---->')
+ylabel('amplitude---->')
+title('blackman window with m=25')
+[h,w]=freqz(blmw);
+wn=w./(2*pi);
+hn=abs(h)./max(abs(h));
+subplot(2,1,2)
+plot(wn,20.*log10(hn),'b')
+xlabel('Normalized frequency---->')
+ylabel('normalized magnitude response (db)---->')
+title('frequency response of blackman window function')
+hold on
+clear
+m=49;
+n=0:1:m-1;
+blmw=0.42-(0.5)*(cos((2.*pi.*n)./(m-1))) + (0.08)*(cos((4.*pi.*n)./(m-1)));
+[h,w]=freqz(blmw);
+wn=w./(2*pi);
+hn=abs(h)./max(abs(h));
+plot(wn,20.*log10(hn),'r')
+hold off
+legend('m=25','m=49');
+
+
+
+EXP 6
+%% using rectangular window
+clc;
+clear all;
+close all;
+wc=0.3*pi;
+m=30;
+n=-(m-1)/2:(m-1)/2;
+hd=@(n) (wc/pi)*sinc(wc*n/pi);
+hd_vals=hd(n);
+W=rectwin(m)';
+h=hd_vals.*W;
+subplot(2,1,1)
+stem(n, h);
+title('Impulse Response');
+xlabel('n---->');
+ylabel('h[n]---->');
+H = fftshift(fft(h,500));
+subplot(2,1,2)
+f=linspace(-pi,pi,500);
+plot(f,abs(H));
+title('Frequency Response');
+xlabel('Normalized Frequency---->');
+ylabel('Magnitude---->');
+%% using triangular window
+clc;
+clear all;
+close all;
+wc=0.3*pi;
+m=30;
+n=-(m-1)/2:(m-1)/2;
+hd=@(n) (wc/pi)*sinc(wc*n/pi);
+hd_vals=hd(n);
+W=triang(m)';
+h=hd_vals.*W;
+subplot(2,1,1)
+stem(n, h);
+title('Impulse Response using triangular window');
+xlabel('n---->');
+ylabel('h[n]---->');
+H = fftshift(fft(h,500));
+subplot(2,1,2)
+f=linspace(-pi,pi,500);
+plot(f,abs(H));
+title('Frequency Response using triangular window');
+xlabel('Normalized Frequency---->');
+ylabel('Magnitude---->');
+
+
+
+EXP 7
+%% using hamming window
+clc;
+clear all;
+close all;
+wc=0.3*pi;
+m=30;
+i=1;
+for n = -(m/2):(m/2)
+if n~=0
+hd(i) = -(wc / pi) * sinc(wc * n / pi);
+else
+hd(i)=(pi-wc)/pi;
+end
+i=i+1;
+end
+W=hamming(m+1)';
+h=hd.*W;
+figure
+subplot(2,1,1)
+stem(h);
+title('Impulse Response using hamming window');
+xlabel('n---->');
+ylabel('h[n]---->');
+H = fftshift(fft(h,500));
+subplot(2,1,2)
+f=linspace(-pi,pi,500);
+plot(f,abs(H));
+title('Frequency Response using hamming window');
+xlabel('Normalized Frequency---->');
+ylabel('Magnitude---->');
+%% using hanning window
+clc;
+clear all;
+close all;
+wc=0.3*pi;
+m=30;
+i=1;
+for n = -(m/2):(m/2)
+if n~=0
+hd(i) = -(wc / pi) * sinc(wc * n / pi);
+else
+hd(i)=(pi-wc)/pi;
+end
+i=i+1;
+end
+W=hann(m+1)';
+h=hd.*W;
+figure
+subplot(2,1,1)
+stem(h);
+title('Impulse Response using hanning window');
+xlabel('n---->');
+ylabel('h[n]---->');
+H = fftshift(fft(h,100));
+subplot(2,1,2)
+f=linspace(-pi,pi,100);
+plot(f,abs(H));
+title('Frequency Response using hanning window');
+xlabel('Normalized Frequency---->');
+ylabel('Magnitude---->');
+
+
+EXP 8
+% Band Pass filter using Kaiser Window
+clc
+clear all
+close all
+m=30;
+wc1=0.3*pi;
+wc2=0.8*pi;
+hd=zeros(1,m+1);
+i=1;
+for n=-(m/2):(m/2)
+if n~=0
+hd(i)= (wc2/pi)*sinc(wc2*n/pi) - (wc1/pi)*sinc(wc1*n/pi);
+else
+hd(i)=(wc2-wc1)/pi;
+end
+i=i+1;
+end
+W=kaiser(m+1,0.25)';
+h=hd.*W;
+H=fftshift(fft(h,500));
+Hw=abs(H);
+f=linspace(-pi,pi,500);
+figure;
+subplot(2,1,1)
+stem(-m/2:m/2,h)
+xlabel("n---->")
+ylabel("h[n]---->")
+title("Impulse response of Band-Pass filter")
+subplot(2,1,2)
+plot(f,Hw)
+xlabel("Normalised frequency ---->")
+ylabel("Frequency response---->")
+title("Frequency response of Band-Pass filter")
+
+
+clc
+clear all
+ag=0.2
+as=40
+sf=8000
+fp=2000
+fs=3500
+ds=10^(-0.05*as)%stop band attenuation levels
+dp=10^(-0.05*ag)%passband ripple level
+wp=(2*fp)/sf%normallizedpassband frequency
+ws=(2*fs)/sf%normalize stopband fequency
+n1=0.5*log10(((1/ds^2)-1)/((1/dp^2)-1)/log10(ws/wp))%filter order
+n=ceil(n1)
+wc=wp/((1/dp^2)-1)^(1/(2*n))%cut-off frequency
+[b,a,k]=butter(n,wc,'low')
+tf1=zp2tf(b,a,k)%converts to transfer function format
+fvtool(tf1)
+[bz,az]=impinvar(b,a,1)
+tf2=zp2tf(bz',az',k)
+fvtool(tf2)
+title(fvtool(tf2),'102115190 Actual Butterworth Filter')
